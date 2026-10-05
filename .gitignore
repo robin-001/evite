@@ -1,5 +1,6 @@
 download/
 output/
+upload/
 venv/
 __pycache__/
 .svn/

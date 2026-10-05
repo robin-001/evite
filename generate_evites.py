@@ -17,6 +17,7 @@ import base64
 import urllib.parse
 import re
 import sqlite3
+import shutil
 from reportlab.pdfbase.pdfmetrics import stringWidth
 
 # Load environment variables
@@ -41,11 +42,11 @@ EVITE_BASE_URL = "https://events.angstrom-technologies.ug/evite"
 def format_greeting(title, name):
     # If title contains 'Mr & Mrs', format it as a single unit
     if "&" in title:
-        return f"Dear {title} {name.split()[0]}"
+        return f"{title} {name.split()[0]}"
     # For single titles, format as "Dear Mr. Edmund"
     if title:
-        return f"Dear {title}. {name.split()[0]}"
-    return f"Dear {name.split()[0]}"
+        return f"{title}. {name.split()[0]}"
+    return f"{name.split()[0]}"
 
 # Create message template with formatted greeting
 MESSAGE_TEMPLATE = "{greeting},\n\nHere is your birthday invitation e-vite. Please save it and present it at the event.\n\nBest regards,\nBirthday Organizers"
@@ -349,11 +350,13 @@ def get_or_create_evite(conn, name, title, phones, admits, filename):
         (name,)
     ).fetchone()
     if row:
-        evite_id, evite_uuid, verify_data, download_url = row
+        evite_id, evite_uuid, verify_data, _ = row
+        # Short filename keeps SMS under 160 chars; derived from the stable UUID
+        download_url = f"{EVITE_BASE_URL}/download/{evite_uuid.split('-')[0]}.pdf"
         conn.execute(
             "UPDATE evites SET title=?, phones=?, admits=?, filename=?, "
-            "updated_at=datetime('now') WHERE id=?",
-            (title, phones, admits, filename, evite_id)
+            "download_url=?, updated_at=datetime('now') WHERE id=?",
+            (title, phones, admits, filename, download_url, evite_id)
         )
         conn.commit()
         return {"id": evite_id, "uuid": evite_uuid,
@@ -361,8 +364,7 @@ def get_or_create_evite(conn, name, title, phones, admits, filename):
 
     evite_uuid = str(uuid.uuid4())
     verify_data = f"{title}:{name}:{phones}:{evite_uuid}"
-    encoded = base64.urlsafe_b64encode(verify_data.encode()).decode()
-    download_url = f"{EVITE_BASE_URL}/download/{encoded}.pdf"
+    download_url = f"{EVITE_BASE_URL}/download/{evite_uuid.split('-')[0]}.pdf"
     cur = conn.execute(
         "INSERT INTO evites (name, title, phones, admits, uuid, verify_data, "
         "download_url, filename) VALUES (?,?,?,?,?,?,?,?)",
@@ -576,11 +578,19 @@ def generate_evites(data_path, output_dir="output"):
                 generate_pdf(name, title, phone, admits, output_path, evite["verify_data"])
                 logger.info(f"Successfully generated e-vite for {name} with UUID: {evite['uuid']}")
 
+                # Upload copy named after the download URL's short ID
+                upload_dir = "upload"
+                os.makedirs(upload_dir, exist_ok=True)
+                shutil.copyfile(output_path,
+                                os.path.join(upload_dir,
+                                             f"{evite['uuid'].split('-')[0]}.pdf"))
+
                 # SMS each '/'-separated number with the download link
-                message = (f"{format_greeting(title, name)}, you are invited to "
-                           f"Herbert Tindyebwa Murangira's 60th Birthday, Friday "
-                           f"30th October 2026, Speke Resort Munyonyo, Victoria Hall. "
+                message = (f"{format_greeting(title, name)}, "
+                           f"Join us to celebrate Herbert Tindyebwa Murangira's 60th Birthday. "
                            f"Your e-vite: {evite['download_url']}")
+                if len(message) > 160:
+                    logger.warning(f"SMS for {name} is {len(message)} chars (>160)")
                 for number in [p.strip() for p in phone.split('/') if p.strip()]:
                     if SEND_SMS:
                         ok, resp = send_sms_kenkom(number, message)
@@ -592,7 +602,7 @@ def generate_evites(data_path, output_dir="output"):
                             logger.error(f"SMS to {number} failed: {resp}")
                     else:
                         log_sms(conn, evite["id"], number, 'dry_run', message)
-                        logger.info(f"[DRY RUN] SMS to {number}: {message}")
+                        logger.info(f"[DRY RUN] SMS to {number} ({len(message)} chars): {message}")
 
             except Exception as e:
                 logger.error(f"Error processing {name}: {str(e)}")
