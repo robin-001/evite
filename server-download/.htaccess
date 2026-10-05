@@ -1,0 +1,8 @@
+# Don't list directory contents
+Options -Indexes
+
+# Serve index.php for the bare directory request (redirects to verify.php)
+DirectoryIndex index.php
+
+# Redirect /evite/download/ or /evite/download exactly to the verify page
+RedirectMatch 301 ^/evite/download/?$ https://events.angstrom-technologies.ug/evite/verify.php
