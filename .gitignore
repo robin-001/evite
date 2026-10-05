@@ -1,0 +1,14 @@
+download/
+output/
+venv/
+__pycache__/
+.svn/
+invite_banner.jpg
+.env
+*.log
+*.zip
+*.pdf
+*.csv
+*.db
+*.xlsx
+*.xls

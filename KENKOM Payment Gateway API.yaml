@@ -1,0 +1,1408 @@
+openapi: 3.0.3
+info:
+  title: KENKOM Payment Gateway API
+  version: 1.0.0
+  description: REST API for multi-tenant payments, wallets, SMS, and Cyclos integration.
+paths:
+  /api/v1/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Obtain a JWT token pair for a user.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+          description: ''
+  /api/v1/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: Accept a refresh token for client-side invalidation.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logout'
+          description: ''
+  /api/v1/auth/password/change/:
+    post:
+      operationId: auth_password_change_create
+      description: Change the authenticated user's password.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/token/:
+    post:
+      operationId: auth_token_create
+      description: Alias for simplejwt token obtain view.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/v1/auth/token/refresh/:
+    post:
+      operationId: auth_token_refresh_create
+      description: Alias for simplejwt token refresh view.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/auth/token/verify/:
+    post:
+      operationId: auth_token_verify_create
+      description: Alias for simplejwt token verify view.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerifyRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/user/:
+    get:
+      operationId: auth_user_retrieve
+      description: Return the currently authenticated user.
+      tags:
+      - auth
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+          description: ''
+  /api/v1/bulk-disbursement/:
+    get:
+      operationId: bulk_disbursement_retrieve
+      description: List bulk disbursement campaigns.
+      tags:
+      - bulk-disbursement
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/bulk-sms/:
+    get:
+      operationId: bulk_sms_retrieve
+      description: List bulk SMS campaigns.
+      tags:
+      - bulk-sms
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/keys/generate/:
+    post:
+      operationId: keys_generate_create
+      description: Generate a new API key for the organization.
+      tags:
+      - keys
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateKeyRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GenerateKeyRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GenerateKeyRequest'
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateKey'
+          description: ''
+  /api/v1/money/{transaction_id}/status/:
+    get:
+      operationId: money_status_retrieve
+      description: Get the status of a mobile-money transaction.
+      parameters:
+      - in: path
+        name: transaction_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - money
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/money/request/:
+    post:
+      operationId: money_request_create
+      description: Initiate a mobile-money collection (request payment).
+      tags:
+      - money
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestPaymentRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RequestPaymentRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RequestPaymentRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestPaymentRequest'
+          description: ''
+  /api/v1/money/send/:
+    post:
+      operationId: money_send_create
+      description: Initiate a mobile-money disbursement (send money).
+      tags:
+      - money
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMoneyRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendMoneyRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendMoneyRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendMoneyRequest'
+          description: ''
+  /api/v1/money/statement/:
+    get:
+      operationId: money_statement_retrieve
+      description: List mobile-money transactions for the organization.
+      tags:
+      - money
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/operators/:
+    post:
+      operationId: operators_create
+      description: Create an operator wallet customer (Cyclos-backed individual).
+      tags:
+      - operators
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOperatorRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateOperatorRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateOperatorRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOperatorRequest'
+          description: ''
+  /api/v1/operators/{operator_id}/:
+    get:
+      operationId: operators_retrieve
+      description: Retrieve an operator wallet customer.
+      parameters:
+      - in: path
+        name: operator_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - operators
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/operators/{operator_id}/balance/:
+    get:
+      operationId: operators_balance_retrieve
+      description: Retrieve an operator's wallet balance.
+      parameters:
+      - in: path
+        name: operator_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - operators
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sms/:
+    get:
+      operationId: sms_retrieve
+      description: List SMS messages for the organization.
+      tags:
+      - sms
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sms/{message_id}/status/:
+    get:
+      operationId: sms_status_retrieve
+      description: Get the status of an SMS message.
+      parameters:
+      - in: path
+        name: message_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - sms
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sms/send/:
+    post:
+      operationId: sms_send_create
+      description: Send an SMS to a single recipient.
+      tags:
+      - sms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendSMSRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendSMSRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendSMSRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendSMSRequest'
+          description: ''
+  /api/v1/sms/statement/:
+    get:
+      operationId: sms_statement_retrieve
+      description: List SMS messages for the organization.
+      tags:
+      - sms
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/sms/topup/:
+    post:
+      operationId: sms_topup_create
+      description: Record an SMS top-up (admin/finance action).
+      tags:
+      - sms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SMSTopupRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SMSTopupRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SMSTopupRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SMSTopup'
+          description: ''
+  /api/v1/transactions/log/:
+    get:
+      operationId: transactions_log_retrieve
+      description: List transaction logs for the organization.
+      tags:
+      - transactions
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/users/:
+    get:
+      operationId: users_retrieve
+      description: List users in the organization.
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/v1/users/{user_id}/:
+    post:
+      operationId: users_create
+      description: Create, update, or delete an organization user.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateUpdate'
+          description: ''
+    put:
+      operationId: users_update
+      description: Create, update, or delete an organization user.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateUpdate'
+          description: ''
+    delete:
+      operationId: users_destroy
+      description: Create, update, or delete an organization user.
+      parameters:
+      - in: path
+        name: user_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/manage/:
+    post:
+      operationId: users_manage_create
+      description: Create, update, or delete an organization user.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateUpdate'
+          description: ''
+    put:
+      operationId: users_manage_update
+      description: Create, update, or delete an organization user.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateUpdateRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateUpdate'
+          description: ''
+    delete:
+      operationId: users_manage_destroy
+      description: Create, update, or delete an organization user.
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/wallet/balances/:
+    get:
+      operationId: wallet_balances_list
+      description: Cached balances of the platform's external provider float accounts.
+      tags:
+      - wallet
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ExternalAccountBalance'
+          description: ''
+  /api/v1/wallet/transactions/{transaction_id}/:
+    get:
+      operationId: wallet_transactions_retrieve
+      description: Look up a wallet transaction in Cyclos by transaction ID.
+      parameters:
+      - in: path
+        name: transaction_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - wallet
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/wallet/transfers/:
+    post:
+      operationId: wallet_transfers_create
+      description: Execute a wallet-to-wallet transfer.
+      tags:
+      - wallet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWalletTransferRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateWalletTransferRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateWalletTransferRequestRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateWalletTransferRequest'
+          description: ''
+  /api/v1/wallet/transfers/{transfer_id}/:
+    get:
+      operationId: wallet_transfers_retrieve
+      description: Retrieve a wallet transfer by local ID.
+      parameters:
+      - in: path
+        name: transfer_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - wallet
+      security:
+      - jwtAuth: []
+      - cookieAuth: []
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    ChangePasswordRequest:
+      type: object
+      properties:
+        old_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - new_password
+      - old_password
+    CreateOperatorRequest:
+      type: object
+      properties:
+        msisdn:
+          type: string
+          description: Mobile number of the customer.
+        first_name:
+          type: string
+          description: First name.
+        last_name:
+          type: string
+          description: Last name.
+        email:
+          description: Email address (optional).
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+      required:
+      - first_name
+      - last_name
+      - msisdn
+    CreateOperatorRequestRequest:
+      type: object
+      properties:
+        msisdn:
+          type: string
+          minLength: 1
+          description: Mobile number of the customer.
+        first_name:
+          type: string
+          minLength: 1
+          description: First name.
+        last_name:
+          type: string
+          minLength: 1
+          description: Last name.
+        email:
+          description: Email address (optional).
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+      required:
+      - first_name
+      - last_name
+      - msisdn
+    CreateWalletTransferRequest:
+      type: object
+      properties:
+        from_customer_id:
+          type: string
+          format: uuid
+          description: Sender customer ID.
+        to_customer_id:
+          type: string
+          format: uuid
+          description: Recipient customer ID.
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+          description: Transfer amount.
+        reference:
+          type: string
+          description: Your reference.
+        description:
+          type: string
+          description: Transfer description.
+        idempotency_key:
+          type: string
+          description: Unique key to prevent duplicate transfers.
+      required:
+      - amount
+      - from_customer_id
+      - idempotency_key
+      - to_customer_id
+    CreateWalletTransferRequestRequest:
+      type: object
+      properties:
+        from_customer_id:
+          type: string
+          format: uuid
+          description: Sender customer ID.
+        to_customer_id:
+          type: string
+          format: uuid
+          description: Recipient customer ID.
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+          description: Transfer amount.
+        reference:
+          type: string
+          description: Your reference.
+        description:
+          type: string
+          description: Transfer description.
+        idempotency_key:
+          type: string
+          minLength: 1
+          description: Unique key to prevent duplicate transfers.
+      required:
+      - amount
+      - from_customer_id
+      - idempotency_key
+      - to_customer_id
+    CurrentUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        organization:
+          type: string
+          format: uuid
+          nullable: true
+        is_superuser:
+          type: boolean
+      required:
+      - email
+      - first_name
+      - id
+      - is_superuser
+      - last_name
+      - organization
+      - username
+    ExternalAccountBalance:
+      type: object
+      properties:
+        name:
+          type: string
+        currency:
+          type: string
+        currency_symbol:
+          type: string
+        amount:
+          type: number
+          format: double
+          maximum: 1000000000000000000
+          minimum: -1000000000000000000
+          exclusiveMaximum: true
+          exclusiveMinimum: true
+        last_updated:
+          type: string
+          format: date-time
+      required:
+      - amount
+      - currency
+      - currency_symbol
+      - last_updated
+      - name
+    GenerateKey:
+      type: object
+      properties:
+        name:
+          type: string
+          default: Generated API key
+        scope:
+          type: array
+          items:
+            type: string
+        expiry_days:
+          type: integer
+          default: 365
+    GenerateKeyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          default: Generated API key
+        scope:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        expiry_days:
+          type: integer
+          default: 365
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+      - username
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    Logout:
+      type: object
+      properties:
+        refresh:
+          type: string
+      required:
+      - refresh
+    LogoutRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    ProviderEnum:
+      enum:
+      - mtn
+      - airtel
+      type: string
+      description: |-
+        * `mtn` - mtn
+        * `airtel` - airtel
+    RequestPaymentRequest:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/ProviderEnum'
+          description: |-
+            Payment provider. Auto-detected from the MSISDN prefix when omitted.
+
+            * `mtn` - mtn
+            * `airtel` - airtel
+        phone:
+          type: string
+          description: Payer phone number (MSISDN).
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+          description: Amount to collect.
+        reference:
+          type: string
+          description: Your reference for this transaction.
+        payer_message:
+          type: string
+          description: Message shown to the payer. Defaults to "Cash In".
+        payee_note:
+          type: string
+          description: Note stored on the transaction. Defaults to "Cash In".
+        webhook_url:
+          description: URL we POST a transaction.completed event to when this transaction
+            reaches a terminal status.
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+      required:
+      - amount
+      - phone
+    RequestPaymentRequestRequest:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/ProviderEnum'
+          description: |-
+            Payment provider. Auto-detected from the MSISDN prefix when omitted.
+
+            * `mtn` - mtn
+            * `airtel` - airtel
+        phone:
+          type: string
+          minLength: 1
+          description: Payer phone number (MSISDN).
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+          description: Amount to collect.
+        reference:
+          type: string
+          description: Your reference for this transaction.
+        payer_message:
+          type: string
+          description: Message shown to the payer. Defaults to "Cash In".
+        payee_note:
+          type: string
+          description: Note stored on the transaction. Defaults to "Cash In".
+        webhook_url:
+          description: URL we POST a transaction.completed event to when this transaction
+            reaches a terminal status.
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+      required:
+      - amount
+      - phone
+    SMSTopup:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+        reference:
+          type: string
+        notes:
+          type: string
+      required:
+      - amount
+    SMSTopupRequest:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+        reference:
+          type: string
+        notes:
+          type: string
+      required:
+      - amount
+    SendMoneyRequest:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/ProviderEnum'
+          description: |-
+            Payment provider. Auto-detected from the MSISDN prefix when omitted.
+
+            * `mtn` - mtn
+            * `airtel` - airtel
+        phone:
+          type: string
+          description: Recipient phone number (MSISDN).
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+          description: Amount to disburse.
+        reference:
+          type: string
+          description: Your reference for this transaction.
+        payer_message:
+          type: string
+          description: Message shown to the payee. Defaults to "Cash Out".
+        payee_note:
+          type: string
+          description: Note stored on the transaction. Defaults to "Cash Out".
+        webhook_url:
+          description: URL we POST a transaction.completed event to when this transaction
+            reaches a terminal status.
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+      required:
+      - amount
+      - phone
+    SendMoneyRequestRequest:
+      type: object
+      properties:
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/ProviderEnum'
+          description: |-
+            Payment provider. Auto-detected from the MSISDN prefix when omitted.
+
+            * `mtn` - mtn
+            * `airtel` - airtel
+        phone:
+          type: string
+          minLength: 1
+          description: Recipient phone number (MSISDN).
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,17}(?:\.\d{0,2})?$
+          description: Amount to disburse.
+        reference:
+          type: string
+          description: Your reference for this transaction.
+        payer_message:
+          type: string
+          description: Message shown to the payee. Defaults to "Cash Out".
+        payee_note:
+          type: string
+          description: Note stored on the transaction. Defaults to "Cash Out".
+        webhook_url:
+          description: URL we POST a transaction.completed event to when this transaction
+            reaches a terminal status.
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+      required:
+      - amount
+      - phone
+    SendSMSRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          description: Recipient phone number.
+        message:
+          type: string
+          description: SMS message body.
+        sender:
+          type: string
+          description: Sender ID (optional).
+      required:
+      - message
+      - phone
+    SendSMSRequestRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          description: Recipient phone number.
+        message:
+          type: string
+          minLength: 1
+          description: SMS message body.
+        sender:
+          type: string
+          description: Sender ID (optional).
+      required:
+      - message
+      - phone
+    TokenObtainPair:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+      required:
+      - access
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - refresh
+    TokenVerifyRequest:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - token
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          title: Email address
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        organization:
+          type: string
+          format: uuid
+          nullable: true
+          description: The organisation this user belongs to. Superusers may leave
+            this blank to access all tenants.
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        is_active:
+          type: boolean
+          title: Active
+          description: Designates whether this user should be treated as active. Unselect
+            this instead of deleting accounts.
+      required:
+      - id
+      - username
+    UserCreateUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+        last_name:
+          type: string
+        is_superuser:
+          type: boolean
+          default: false
+        is_active:
+          type: boolean
+          default: true
+      required:
+      - username
+    UserCreateUpdateRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        first_name:
+          type: string
+        last_name:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        is_superuser:
+          type: boolean
+          default: false
+        is_active:
+          type: boolean
+          default: true
+      required:
+      - password
+      - username
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
