@@ -500,7 +500,7 @@ def generate_pdf(name, title, phone, admits, output_path, verify_data):
         draw_fitted(RSVP_LINES[1], xr(0.679), yr(0.790), "Helvetica-Oblique", col_size, 240)
 
         # Create QR code with verification URL (same payload as the download link)
-        verify_url = f"{EVITE_BASE_URL}/verify/{base64.urlsafe_b64encode(verify_data.encode()).decode()}"
+        verify_url = f"{EVITE_BASE_URL}/verify.php/{base64.urlsafe_b64encode(verify_data.encode()).decode()}"
 
         qr = qrcode.QRCode(
             version=1,
@@ -527,7 +527,30 @@ def generate_pdf(name, title, phone, admits, output_path, verify_data):
         # Footer
         for i, line in enumerate(FOOTER_LINES):
             pass
-            #draw_centered_fitted(line, yr(0.945 + i * 0.019), "Helvetica", 8.5, FOOTER_BLUE)
+
+        # "Validated" + vector checkmark as a real clickable link to the
+        # verify URL (ZapfDingbats ✓ renders unreliably in some viewers).
+        link_y = yr(0.945 + 2 * 0.019)
+        label, font, size = "Validated", "Helvetica", 8.5
+        text_w = stringWidth(label, font, size)
+        gap, check_w = 4, 8          # space before check, check width
+        link_w = text_w + gap + check_w
+        link_x = (PAGE_WIDTH - link_w) / 2
+        c.setFillColor(FOOTER_BLUE)
+        c.setFont(font, size)
+        c.drawString(link_x, link_y, label)
+
+        # Drawn checkmark
+        c.setStrokeColor(FOOTER_BLUE)
+        c.setLineWidth(1.4)
+        cx = link_x + text_w + gap
+        c.line(cx, link_y + 4.5, cx + 3, link_y + 1.2)
+        c.line(cx + 3, link_y + 1.2, cx + check_w, link_y + 8)
+
+        c.linkURL(verify_url,
+                  ((PAGE_WIDTH - link_w) / 2, link_y - 2,
+                   (PAGE_WIDTH + link_w) / 2, link_y + 8.5),
+                  relative=0, thickness=0)
 
         # Save PDF
         c.save()
