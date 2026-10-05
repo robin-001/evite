@@ -602,7 +602,7 @@ def generate_evites(data_path, output_dir="output"):
                 logger.info(f"Successfully generated e-vite for {name} with UUID: {evite['uuid']}")
 
                 # Upload copy named after the download URL's short ID
-                upload_dir = "upload"
+                upload_dir = "download"
                 os.makedirs(upload_dir, exist_ok=True)
                 shutil.copyfile(output_path,
                                 os.path.join(upload_dir,
