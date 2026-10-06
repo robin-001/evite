@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: letter; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 8.5in; height: 11in; }
+  body {
+    background: {{ event.card_bg_color }};
+    color: {{ event.card_text_color }};
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .banner {
+    position: absolute; top: 0; left: 0; width: 100%; height: 49.5%;
+    {% if artwork_url %}
+    background-image: url('{{ artwork_url }}');
+    background-size: cover;
+    background-position: top center;
+    {% endif %}
+  }
+  .banner::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom,
+      transparent 62%, {{ event.card_bg_color }} 100%);
+  }
+
+  .content {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  .greeting {
+    margin-top: 55%; font-size: 15pt; font-weight: 700;
+    letter-spacing: .5px;
+    max-width: 86%; text-align: center;
+  }
+  .phone-line {
+    margin-top: 2pt; font-size: 8pt; opacity: .62;
+  }
+
+  .join {
+    margin-top: 14pt; font-size: 17pt; letter-spacing: 1px;
+    display: flex; align-items: center; gap: 14pt;
+    width: 80%; justify-content: center;
+  }
+  .join .rule { flex: 1; border-top: 1pt solid {{ event.card_accent_color }}; }
+
+  .celebrate-name {
+    margin-top: 8pt; font-size: 23pt; font-weight: 700; letter-spacing: .5px;
+    max-width: 90%; text-align: center;
+  }
+  .celebrate-sub { margin-top: 7pt; font-size: 17pt; letter-spacing: 1px; }
+  .celebrate-sub sup { font-size: .62em; }
+
+  .rule-row {
+    width: 80%; border-top: 1pt solid {{ event.card_accent_color }};
+    margin: 12pt 0;
+  }
+
+  .cols {
+    width: 80%; display: flex; font-size: 10pt; line-height: 1.55;
+  }
+  .cols .left  { width: 38%; padding-right: 12pt; }
+  .cols .right { width: 62%; padding-left: 12pt;
+                 border-left: 1pt solid {{ event.card_accent_color }}; }
+
+  .rsvp-label {
+    margin-top: 12pt; font-size: 11.5pt; font-style: italic;
+    letter-spacing: 2px;
+  }
+  .rsvp-contacts {
+    margin-top: 10pt; width: 80%; display: flex;
+    justify-content: space-between;
+    font-size: 10pt; font-style: italic;
+  }
+
+  .bottom {
+    position: absolute; left: 4%; right: 4%; bottom: 5%;
+    display: flex; align-items: center; gap: 18pt;
+  }
+  .bottom img { width: 1.26in; height: 1.26in; }
+  .admits { font-size: 10pt; }
+
+  .footer {
+    position: absolute; bottom: 1.2%; left: 0; right: 0;
+    text-align: center; font-size: 8pt; color: #99ccff;
+    line-height: 1.5;
+  }
+  .footer .brand { color: #0b8cff; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="banner"></div>
+  <div class="content">
+    <div class="greeting">{{ greeting }}</div>
+    <div class="phone-line">Phone: {{ guest.phone }}</div>
+
+    <div class="join">
+      <span class="rule"></span>
+      <span>PLEASE JOIN US TO CELEBRATE</span>
+      <span class="rule"></span>
+    </div>
+    <div class="celebrate-name">{{ event.name }}</div>
+    <div class="celebrate-sub">{{ event.date_text }}</div>
+
+    <div class="rule-row"></div>
+    <div class="cols">
+      <div class="left">
+        <div>{{ event.date_text|upper }}</div>
+      </div>
+      <div class="right">
+        <div>VENUE: {{ event.venue|upper }}</div>
+        <div>DRESS CODE: {{ event.dress_code|upper }}</div>
+      </div>
+    </div>
+    <div class="rule-row"></div>
+
+    {% if event.rsvp_contacts %}
+    <div class="rsvp-label">RSVP</div>
+    <div class="rsvp-contacts">
+      {% for contact in event.rsvp_contacts %}
+      <span>{{ contact }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="bottom">
+      <img src="{{ qr_data_url }}" alt="QR">
+      <div class="admits">This Invite Admits {{ guest.admits }}
+        {% if guest.admits == 1 %}person{% else %}people{% endif %}
+      </div>
+    </div>
+
+    <div class="footer">
+      <span class="brand">Powered by Angstrom Technologies</span><br>
+      {{ brand_site }} &nbsp;·&nbsp; {{ brand_email }}<br>
+      {{ address }}
+    </div>
+  </div>
+</body>
+</html>

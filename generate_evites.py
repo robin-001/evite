@@ -22,7 +22,6 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 
 # Load environment variables
 load_dotenv()
-
 # Infobip API settings
 INFOBIP_API_KEY = os.getenv('INFOBIP_API_KEY')
 # Use hardcoded sender number in E.164 format
